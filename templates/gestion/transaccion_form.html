@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva transaccion - Alke Wallet</title>
+    <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{% url 'cuenta_list' %}">Alke Wallet</a>
+        <nav>
+            <a href="{% url 'cuenta_list' %}">Mis cuentas</a>
+            <a href="{% url 'reporte' %}">Reporte</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+            <form action="{% url 'logout' %}" method="post" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="link-button">Cerrar sesion ({{ user.username }})</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="card">
+            <h1>Nueva transaccion en {{ cuenta.numero_cuenta }}</h1>
+            <p>Saldo actual: <span class="saldo-positivo">${{ cuenta.saldo }}</span></p>
+            <form method="post" class="form-card">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-success">Registrar</button>
+                <a class="btn" href="{% url 'cuenta_detail' cuenta.pk %}">Cancelar</a>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

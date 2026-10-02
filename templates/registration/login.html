@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar sesion - Alke Wallet</title>
+    <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{% url 'login' %}">Alke Wallet</a>
+        <nav>
+            <a href="{% url 'login' %}">Iniciar sesion</a>
+            <a href="{% url 'registro' %}">Crear cuenta</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <div class="card">
+            <h1>Iniciar sesion</h1>
+            <form method="post" class="form-card">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn">Ingresar</button>
+            </form>
+            <p>¿No tienes cuenta? <a href="{% url 'registro' %}">Registrate aqui</a></p>
+        </div>
+    </main>
+</body>
+</html>

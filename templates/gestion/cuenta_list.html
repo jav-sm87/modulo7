@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis cuentas - Alke Wallet</title>
+    <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{% url 'cuenta_list' %}">Alke Wallet</a>
+        <nav>
+            <a href="{% url 'cuenta_list' %}">Mis cuentas</a>
+            <a href="{% url 'reporte' %}">Reporte</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+            <form action="{% url 'logout' %}" method="post" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="link-button">Cerrar sesion ({{ user.username }})</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <h1>Mis cuentas</h1>
+        <p><a class="btn btn-success" href="{% url 'cuenta_create' %}">+ Nueva cuenta</a></p>
+
+        {% if cuentas %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Numero</th>
+                        <th>Tipo</th>
+                        <th>Saldo</th>
+                        <th>Transacciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cuenta in cuentas %}
+                        <tr>
+                            <td>{{ cuenta.numero_cuenta }}</td>
+                            <td>{{ cuenta.get_tipo_cuenta_display }}</td>
+                            <td class="saldo-positivo">${{ cuenta.saldo }}</td>
+                            <td>{{ cuenta.total_transacciones }}</td>
+                            <td>
+                                <a href="{% url 'cuenta_detail' cuenta.pk %}">Ver</a>
+                                <a href="{% url 'cuenta_update' cuenta.pk %}">Editar</a>
+                                <a href="{% url 'cuenta_delete' cuenta.pk %}">Eliminar</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Aun no tienes cuentas registradas.</p>
+        {% endif %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cuenta {{ cuenta.numero_cuenta }} - Alke Wallet</title>
+    <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{% url 'cuenta_list' %}">Alke Wallet</a>
+        <nav>
+            <a href="{% url 'cuenta_list' %}">Mis cuentas</a>
+            <a href="{% url 'reporte' %}">Reporte</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+            <form action="{% url 'logout' %}" method="post" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="link-button">Cerrar sesion ({{ user.username }})</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p><a href="{% url 'cuenta_list' %}">&laquo; Volver a mis cuentas</a></p>
+        <div class="card">
+            <h1>Cuenta {{ cuenta.numero_cuenta }}</h1>
+            <p><strong>Tipo:</strong> {{ cuenta.get_tipo_cuenta_display }}</p>
+            <p><strong>Saldo:</strong> <span class="saldo-positivo">${{ cuenta.saldo }}</span></p>
+            <p><strong>Activa:</strong> {{ cuenta.activa|yesno:"Si,No" }}</p>
+            <a class="btn" href="{% url 'cuenta_update' cuenta.pk %}">Editar</a>
+            <a class="btn btn-danger" href="{% url 'cuenta_delete' cuenta.pk %}">Eliminar</a>
+        </div>
+
+        <h2>Transacciones</h2>
+        <p><a class="btn btn-success" href="{% url 'transaccion_create' cuenta.pk %}">+ Nueva transaccion</a></p>
+        <p><a href="{% url 'transaccion_list' cuenta.pk %}">Ver historial completo</a></p>
+    </main>
+</body>
+</html>

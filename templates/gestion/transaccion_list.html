@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Transacciones {{ cuenta.numero_cuenta }} - Alke Wallet</title>
+    <link rel="stylesheet" href="{% static 'css/estilo.css' %}">
+</head>
+<body>
+    <header class="navbar">
+        <a class="brand" href="{% url 'cuenta_list' %}">Alke Wallet</a>
+        <nav>
+            <a href="{% url 'cuenta_list' %}">Mis cuentas</a>
+            <a href="{% url 'reporte' %}">Reporte</a>
+            <a href="{% url 'admin:index' %}">Admin</a>
+            <form action="{% url 'logout' %}" method="post" class="inline-form">
+                {% csrf_token %}
+                <button type="submit" class="link-button">Cerrar sesion ({{ user.username }})</button>
+            </form>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <p><a href="{% url 'cuenta_detail' cuenta.pk %}">&laquo; Volver a la cuenta</a></p>
+        <h1>Transacciones de {{ cuenta.numero_cuenta }}</h1>
+        <p><a class="btn btn-success" href="{% url 'transaccion_create' cuenta.pk %}">+ Nueva transaccion</a></p>
+
+        {% if transacciones %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Tipo</th>
+                        <th>Monto</th>
+                        <th>Destino</th>
+                        <th>Categorias</th>
+                        <th>Descripcion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in transacciones %}
+                        <tr>
+                            <td>{{ t.fecha|date:"d-m-Y H:i" }}</td>
+                            <td>{{ t.get_tipo_display }}</td>
+                            <td>${{ t.monto }}</td>
+                            <td>{{ t.cuenta_destino.numero_cuenta|default:"-" }}</td>
+                            <td>{% for c in t.categorias.all %}{{ c.nombre }} {% endfor %}</td>
+                            <td>{{ t.descripcion }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Esta cuenta aun no tiene transacciones.</p>
+        {% endif %}
+    </main>
+</body>
+</html>
